@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - Orion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      font-family: 'Share Tech Mono', monospace;
+      height: 100vh;
+      background: #121212;
+      color: #fff;
+    }
+
+    .container {
+      height: 100%;
+    }
+
+    .main-area {
+      height: 100%;
+      padding: 2rem;
+      background: #1b1b2b;
+      position: relative;
+      overflow-y: scroll;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .register-container {
+      position: relative;
+      background: #eeeeee;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      max-width: 900px;
+      margin: 0 auto 100px auto;
+      z-index: 2;
+    }
+
+    .register-container h1 {
+      font-size: 2.5rem;
+      color: black;
+      text-align: center;
+      margin-bottom: 2rem;
+      animation: subtleGlow 2s infinite alternate;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 0.5rem;
+      color: black;
+      font-size: 1rem;
+    }
+
+    input, textarea {
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      background-color: white;
+      color: black;
+      font-size: 1rem;
+    }
+
+    textarea {
+      resize: none;
+      height: 120px;
+    }
+
+    .register-btn {
+      grid-column: span 2;
+      padding: 0.75rem 2rem;
+      background-color: #007bff;
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .register-btn:hover {
+      background-color: #00aacc;
+    }
+
+    .error-message {
+      grid-column: span 2;
+      color: red;
+      text-align: center;
+      font-size: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="main-area">
+      <div class="stars" id="starfield-main"></div>
+      <div class="register-container">
+        <h1>Register</h1>
+        <form method="post" action="/register">
+          <div class="error-message" id="error-message"></div>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirmPassword" required />
+          </div>
+          <div class="form-group">
+            <label for="current-job-role">Current Job Role</label>
+            <input type="text" id="current-job-role" name="currentJobRole" />
+          </div>
+          <div class="form-group">
+            <label for="current-company">Current Company</label>
+            <input type="text" id="current-company" name="currentCompany" />
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="job-description">Job Description</label>
+            <textarea id="job-description" name="jobDescription" placeholder="Write your job description here..."></textarea>
+          </div>
+          <button type="submit" class="register-btn">Register</button>
+          <div class="form-group" style="grid-column: span 2;">
+            <p style="width: 100%; text-align: center;color:black">Already registered? <a href="/login" style="color: black;">Login</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.querySelector('form');
+    const errorMessage = document.getElementById('error-message');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        errorMessage.textContent = 'Passwords do not match.';
+        errorMessage.style.display = 'block';
+        return;
+      }
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch('/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          window.location.href = '/login';
+        } else {
+          const errorData = await response.json();
+          errorMessage.textContent = errorData.error || 'An unknown error occurred.';
+          errorMessage.style.display = 'block';
+        }
+      } catch (err) {
+        errorMessage.textContent = 'Failed to connect to the server.';
+        errorMessage.style.display = 'block';
+      }
+    });
+
+    function generateStars(containerId, count = 70) {
+      const container = document.getElementById(containerId);
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('span');
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(star);
+      }
+    }
+
+    generateStars('starfield-main', 70);
+  </script>
+</body>
+</html>

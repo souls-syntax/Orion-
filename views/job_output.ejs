@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ORION - Job Detail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      font-family: 'Share Tech Mono', monospace;
+      height: 100vh;
+      background: #121212;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+    }
+
+    .sidebar {
+      min-width: 220px;
+      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .sidebar h1 {
+      font-size: 2rem;
+      color: #00d4ff;
+      text-align: center;
+      animation: subtleGlow 2s infinite alternate;
+    }
+
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 1.2rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .logout {
+      margin-top: auto;
+    }
+
+    @keyframes subtleGlow {
+      from { text-shadow: 0 0 5px #00d4ff; }
+      to   { text-shadow: 0 0 15px #00d4ff; }
+    }
+
+    .main-area {
+      flex: 1;
+      padding: 2rem;
+      background: #1b1b2b;
+      position: relative;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .section {
+      background-color: #2e2e40;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .section h2 {
+      color: #00d4ff;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #00d4ff;
+      padding-bottom: 0.5rem;
+    }
+
+    .section ul {
+      list-style: square;
+      padding-left: 1.5rem;
+    }
+
+    .section li {
+      margin-bottom: 0.5rem;
+    }
+
+    .boxes {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .box {
+      flex: 1;
+      background-color: #2e2e40;
+      padding: 1rem;
+      border-radius: 12px;
+      min-height: 100px;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: transparent;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .main-area h1, .main-area h2 {
+      color: #00d4ff;
+      border-bottom: 1px solid #00d4ff;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .section {
+      background: #1e1e2f;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    ul {
+      padding-left: 2rem;
+      list-style-type: square;
+    }
+
+    .card-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .card {
+      background: #2c2c3f;
+      padding: 1rem;
+      border-radius: 12px;
+      flex: 1 1 300px;
+    }
+
+    a {
+      color: #00d4ff;
+      text-decoration: none;
+    }
+
+    iframe {
+      width: 100%;
+      height: 200px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="stars" id="starfield-sidebar"></div>
+      <h1>ORION</h1>
+      <a href="/home">Home</a>
+      <a href="/ats">ATS AI</a>
+      <a href="/Codebot">CodeBot AI</a>
+      <a href="/login" class="logout">Logout</a>
+    </div>
+
+    <div class="main-area">
+      <div class="stars" id="starfield-main"></div>
+
+      <h1><%= job.role %> at <%= job.company %></h1>
+
+      <div class="section">
+        <h2>Salary</h2>
+        <p>$<%= job.salary %></p>
+      </div>
+
+      <% if (job.aiResponse?.Summary) { %>
+        <div class="section">
+          <h2>Preparation Summary</h2>
+          <p><%= job.aiResponse.Summary %></p>
+        </div>
+      <% } %>
+
+      <% if (job.aiResponse?.Coding_Question?.length) { %>
+        <div class="section">
+          <h2>Important Coding Questions</h2>
+          <div class="card-grid">
+            <% job.aiResponse.Coding_Question.forEach(q => { %>
+              <div class="card">
+                <h3><%= q.Question %></h3>
+                <p style="margin-top: 15px;"><strong>Topic:</strong><br/><%= q.DSA %></p>
+                <p style="margin-top: 10px;"><strong>Description:</strong><br/><%= q.Question_description %></p>
+                <p style="margin-top: 10px;"><strong>Difficulty:</strong> <%= q.difficulty %></p>
+                <p style="margin-top: 10px;"><a href="<%= q.Link %>" target="_blank">Practice</a></p>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <% if (job.aiResponse?.Course_Content?.length) { %>
+        <div class="section">
+          <h2>Recommended Courses</h2>
+          <ul>
+            <% job.aiResponse.Course_Content.forEach(course => { %>
+              <li>
+                <strong><%= course.content_name %></strong><br/>
+                <em><%= course.content_description %></em><br/>
+                <a href="<%= course.course_link %>" target="_blank">View Course</a>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (job.aiResponse?.Important_Consideration?.length) { %>
+        <div class="section">
+          <h2>Important Considerations</h2>
+          <ul>
+            <% job.aiResponse.Important_Consideration.forEach(point => { %>
+              <li><%= point %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (job.aiResponse?.Interviews?.length) { %>
+        <div class="section">
+          <h2>Interview Process</h2>
+          <ul>
+            <% job.aiResponse.Interviews.forEach(round => { %>
+              <li>
+                <strong><%= round.Interview_name %>:</strong>
+                <br/><%= round.interview_description %>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (job.aiResponse?.Placement_Rounds?.length) { %>
+        <div class="section">
+          <h2>Placement Rounds</h2>
+          <ul>
+            <% job.aiResponse.Placement_Rounds.forEach(round => { %>
+              <li>
+                <strong><%= round.round_name %></strong><br/><%= round.Round_Description %> (<%= round.Round_Duration %>)
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (job.aiResponse?.Youtube_Videos?.length) { %>
+        <div class="section">
+          <h2>Helpful Videos</h2>
+          <div class="card-grid">
+            <% job.aiResponse.Youtube_Videos.forEach(video => { 
+                const videoId = video.youtube_video_link.split('v=')[1];
+            %>
+              <div class="card">
+                <h3 style="margin-bottom: 20px;"><%= video.youtube_video_name %></h3>
+                <iframe src="https://www.youtube.com/embed/<%= videoId %>" allowfullscreen></iframe>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    function generateStars(containerId, count = 50) {
+      const container = document.getElementById(containerId);
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement("span");
+        star.style.top = Math.random() * 100 + "%";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.animationDelay = Math.random() * 2 + "s";
+        container.appendChild(star);
+      }
+    }
+
+    generateStars("starfield-sidebar", 40);
+    generateStars("starfield-main", 70);
+  </script>
+</body>
+</html>

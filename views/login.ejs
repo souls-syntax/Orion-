@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orion - AI Job Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      font-family: 'Share Tech Mono', monospace; /* Updated font */
+      height: 100vh;
+      background: #f9f9f9;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+    }
+
+    .left-panel {
+      flex: 1;
+      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6rem 5rem;
+      position: relative;
+      overflow: hidden;
+      animation: backgroundPulse 10s ease-in-out infinite;
+    }
+
+    @keyframes backgroundPulse {
+      0%   { background-color: #1e1e2f; }
+      50%  { background-color: #2a2a44; }
+      100% { background-color: #1e1e2f; }
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: transparent;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .top-left-text, .bottom-right-text {
+      position: relative;
+      z-index: 2;
+      background: transparent; /* Transparent background */
+      padding: 1rem 2rem;
+      border-radius: 8px;
+    }
+
+    .top-left-text h1 {
+      font-size: 4.5rem;
+      color: #00d4ff;
+      margin-bottom: 1rem;
+      animation: subtleGlow 2s infinite alternate;
+    }
+
+    @keyframes subtleGlow {
+      from { text-shadow: 0 0 5px #00d4ff; }
+      to   { text-shadow: 0 0 15px #00d4ff; }
+    }
+
+    .typewriter {
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: #eee;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      animation: typing 4s  steps(30, end) forwards;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    .bottom-right-text {
+      align-self: flex-end;
+      text-align: right;
+      max-width: 350px;
+      margin-top: 3rem;
+    }
+
+    .bottom-right-text p {
+      font-size: 2rem;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .right-panel {
+      flex: 1;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 350px;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .avatar-circle {
+      font-size: 3rem;
+      background: #e0e0e0;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #00d4ff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #00aacc;
+    }
+
+    .create-account {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .create-account a {
+      color: #00aacc;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .create-account a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left-panel">
+      <!-- Starfield -->
+      <div class="stars">
+        <script>
+          for (let i = 0; i < 50; i++) {
+            const star = document.createElement("span");
+            star.style.top = Math.random() * 100 + "%";
+            star.style.left = Math.random() * 100 + "%";
+            star.style.animationDelay = Math.random() * 2 + "s";
+            document.write(star.outerHTML);
+          }
+        </script>
+      </div>
+
+      <div class="top-left-text">
+        <h1>ORION</h1>
+        <div class="typewriter">SELF TRAINING AI APP</div>
+      </div>
+
+      <div class="bottom-right-text">
+        <p>MEET THE BEST AI TRAINER FOR JOBS</p>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="login-box">
+        <div class="avatar-circle">🤖</div>
+          <h2>Login</h2>
+          <form id="loginForm" action="/login" method="post">
+              <input type="email" id="email" name="email" placeholder="Email" required />
+              <input type="password" id="password" name="password" placeholder="Password" required />
+              <button type="submit">Login</button>
+          </form>
+          <div id="error-message" style="color: red; margin-top: 1rem; font-size: 0.95rem;"></div>
+          <div class="create-account">
+              Don’t have an account? <a href="/register">Create one</a>
+          </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevent the default form submission
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errorMessageDiv = document.getElementById('error-message');
+
+    // Clear any previous error message
+    errorMessageDiv.textContent = '';
+
+    try {
+        const response = await fetch('/login', {
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            // Display error message in the error-message div
+            errorMessageDiv.textContent = data.error || 'Login failed. Please try again.';
+            return;
+        }
+
+        // Clear error message on successful login
+        errorMessageDiv.textContent = '';
+
+        window.location.href = '/home'; // Example redirect
+    } catch (error) {
+        console.error('Error:', error);
+        errorMessageDiv.textContent = 'An unexpected error occurred.';
+    }
+});
+</script>
+
+</body>
+</html>

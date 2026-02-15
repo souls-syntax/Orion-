@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orion - Add Job</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    /* Previous styles remain the same */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      font-family: 'Share Tech Mono', monospace;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+    }
+
+    .sidebar {
+      min-width: 220px;
+      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .sidebar h1 {
+      font-size: 2rem;
+      color: #00d4ff;
+      text-align: center;
+      animation: subtleGlow 2s infinite alternate;
+    }
+
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 1.2rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .logout {
+      margin-top: auto;
+    }
+
+    @keyframes subtleGlow {
+      from { text-shadow: 0 0 5px #00d4ff; }
+      to   { text-shadow: 0 0 15px #00d4ff; }
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: transparent;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .main-content {
+      flex: 1;
+      background: #1b1b2b;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      height: 100vh;
+      overflow-y: auto;
+      animation: contentSlide 0.5s ease-out;
+    }
+
+    .form-section {
+      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      padding: 2rem;
+      animation: sectionEntry 0.6s ease-out;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-group label {
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .input-field {
+      padding: 0.8rem;
+      border: 1px solid #00d4ff;
+      border-radius: 6px;
+      background: #fff;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .input-field:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+      transform: translateX(5px);
+    }
+
+    .description-field {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      background: #00d4ff;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+      font-size: 1.1rem;
+    }
+
+    .submit-btn:hover {
+      background: #00b4d8;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Rest of the animations and styles remain same */
+  </style>
+</head>
+<body>
+  <div id="loading-overlay" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-size: 1.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    color: #00b4d8;
+  ">
+    Loading...
+  </div>
+  <div class="container">
+    <div class="sidebar">
+      <div class="stars" id="starfield-sidebar"></div>
+      <h1>ORION</h1>
+      <a href="/home">Home</a>
+      <a href="/ats">ATS AI</a>
+      <a href="/Codebot">CodeBot AI</a>
+      <a href="/login" class="logout">Logout</a>
+    </div>
+
+    <div class="main-content">
+      <div class="stars" id="starfield-main"></div>
+      <form class="form-section" style="animation-delay: 0.2s;">
+        <h2 style="color: #fff;">Job Information</h2>
+
+        <div class="input-group">
+          <label>Current Salary (per Annum)</label>
+          <input type="number" class="input-field" placeholder="Enter current salary" id="currentSalary" name="currentSalary">
+        </div>
+
+        <div class="input-group">
+          <label>Current Experience (in years)</label>
+          <input type="number" class="input-field" placeholder="Enter current experience e.g. 3" id="currentExperience" name="currentExperience">
+        </div>
+
+        <div class="input-group">
+          <label>Expected Role</label>
+          <input type="text" class="input-field" placeholder="Enter role name" id="role" name="role">
+        </div>
+
+        <div class="input-group">
+          <label>Expected Company</label>
+          <input type="text" class="input-field" placeholder="Enter company name" id="company" name="company">
+        </div>
+
+        <div class="input-group">
+          <label>Expected Description</label>
+          <textarea class="input-field description-field" placeholder="Enter job description" id="description" name="description"></textarea>
+        </div>
+
+        <div class="input-group">
+          <label>Expected Salary (per Annum)</label>
+          <input type="text" class="input-field" placeholder="Enter expected salary" id="salary" name="salary">
+        </div>
+
+        <button class="submit-btn" onclick="submitForm(event)">Submit</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Starfield
+    function generateStars(containerId, count = 50) {
+      const container = document.getElementById(containerId);
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement("span");
+        star.style.top = Math.random() * 100 + "%";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.animationDelay = Math.random() * 2 + "s";
+        container.appendChild(star);
+      }
+    }
+
+    generateStars("starfield-sidebar", 40);
+    generateStars("starfield-main", 70);
+
+    // Clock
+    function updateClock() {
+      const clock = document.getElementById("clock");
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+  <script>
+    async function submitForm(event) {
+      event.preventDefault();
+
+      // Show loading
+      document.getElementById('loading-overlay').style.display = 'flex';
+
+      const currentSalary = document.getElementById('currentSalary').value;
+      const currentExperience = document.getElementById('currentExperience').value;
+      const role = document.getElementById('role').value;
+      const company = document.getElementById('company').value;
+      const description = document.getElementById('description').value;
+      const salary = document.getElementById('salary').value;
+
+      const data = { role, company, description, salary, currentSalary, currentExperience };
+
+      try {
+        const response = await fetch('/add/job', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Send cookies for session authentication
+          body: JSON.stringify(data),
+        });
+
+        // Hide loading
+        document.getElementById('loading-overlay').style.display = 'none';
+
+        if (response.ok) {
+          window.location.href = '/home';
+        } else {
+          const error = await response.text();
+          alert(`Error: ${error}`);
+        }
+      } catch (error) {
+        console.error('Error submitting the form:', error);
+        alert('An unexpected error occurred. Please try again.');
+
+        // Hide loading even on error
+        document.getElementById('loading-overlay').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

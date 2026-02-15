@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orion - ATS AI</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        font-family: "Share Tech Mono", monospace;
+        height: 100vh;
+        background: #121212;
+        color: #fff;
+        overflow: hidden;
+      }
+
+      .container {
+        display: flex;
+        height: 100%;
+      }
+
+      .sidebar {
+        min-width: 220px;
+        background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+        padding: 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 2;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        color: #00d4ff;
+        text-align: center;
+        animation: subtleGlow 2s infinite alternate;
+      }
+
+      .sidebar a {
+        color: #ccc;
+        text-decoration: none;
+        font-size: 1.2rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+      }
+
+      .sidebar a:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .logout {
+        margin-top: auto;
+      }
+
+      @keyframes subtleGlow {
+        from {
+          text-shadow: 0 0 5px #00d4ff;
+        }
+        to {
+          text-shadow: 0 0 15px #00d4ff;
+        }
+      }
+
+      .main-area {
+        flex: 1;
+        padding: 2rem;
+        background: #1b1b2b;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h2 {
+        font-size: 1.5rem;
+      }
+
+      .ats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.2rem;
+        padding: 1rem 0.5rem;
+        overflow-x: auto;
+      }
+
+      .ats-card {
+        background: #2e2e40;
+        border: 2px solid #00d4ff;
+        border-radius: 10px;
+        padding: 1rem;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+      }
+
+      .ats-card:hover {
+        transform: scale(1.03);
+        background-color: rgba(0, 212, 255, 0.1);
+      }
+
+      .ats-header h3 {
+        color: #00d4ff;
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .ats-header .company {
+        color: #ccc;
+        font-size: 0.95rem;
+        margin-top: 0.2rem;
+        display: block;
+      }
+
+      .ats-meta {
+        margin-top: 1rem;
+        font-size: 0.85rem;
+        color: #aaa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .ats-date {
+        font-style: italic;
+        color: #aaa;
+        font-size: 0.8rem;
+      }
+
+      .add-btn-main {
+        align-self: flex-end;
+        padding: 0.5rem 1.5rem;
+        font-size: 1rem;
+        background: #00d4ff;
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+      }
+
+      .stars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background: transparent;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .stars span {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 2s infinite ease-in-out;
+      }
+
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .footer-note {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #aaa;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="stars" id="starfield-sidebar"></div>
+        <h1>ORION</h1>
+        <a href="/home">Home</a>
+        <a href="/ats">ATS AI</a>
+        <a href="/Codebot">CodeBot AI</a>
+        <a href="/login" class="logout">Logout</a>
+      </div>
+
+      <div class="main-area">
+        <div class="stars" id="starfield-main"></div>
+        <div class="header">
+          <h2>Welcome, User!</h2>
+          <h2 id="clock">--:--:--</h2>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2>ATS AI</h2>
+          <button class="add-btn-main" style="font-weight: bold; color: black;" onclick="window.location.href='/add/ats'">Add ATS</button>
+        </div>
+        <div class="ats-grid">
+          <% if (ats.length === 0) { %>
+            <p style="grid-column: span 4; text-align: center; color: #aaa; font-style: italic;">
+              No ATS created yet.
+            </p>
+          <% } else { %>
+            <% ats.forEach(item => { %>
+              <div class="ats-card" onclick="location.href='/ats/<%= item._id %>'">
+                <div class="ats-header">
+                  <h3>@ <%= item.companyName %></h3>
+                </div>
+                <div class="ats-meta">
+                  <span class="ats-date">Created on <%= new Date(item.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                  }) %></span>
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Starfield
+      function generateStars(containerId, count = 50) {
+        const container = document.getElementById(containerId);
+        for (let i = 0; i < count; i++) {
+          const star = document.createElement("span");
+          star.style.top = Math.random() * 100 + "%";
+          star.style.left = Math.random() * 100 + "%";
+          star.style.animationDelay = Math.random() * 2 + "s";
+          container.appendChild(star);
+        }
+      }
+
+      generateStars("starfield-sidebar", 40);
+      generateStars("starfield-main", 70);
+
+      // Clock
+      function updateClock() {
+        const clock = document.getElementById("clock");
+        const now = new Date();
+        clock.textContent = now.toLocaleTimeString();
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+    </script>
+  </body>
+</html>

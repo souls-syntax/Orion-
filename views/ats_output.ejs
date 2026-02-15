@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orion - ATS AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      font-family: 'Share Tech Mono', monospace;
+      height: 100vh;
+      background: #121212;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+    }
+
+    .sidebar {
+      min-width: 220px;
+      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .sidebar h1 {
+      font-size: 2rem;
+      color: #00d4ff;
+      text-align: center;
+      animation: subtleGlow 2s infinite alternate;
+    }
+
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 1.2rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .logout {
+      margin-top: auto;
+    }
+
+    @keyframes subtleGlow {
+      from { text-shadow: 0 0 5px #00d4ff; }
+      to   { text-shadow: 0 0 15px #00d4ff; }
+    }
+
+    .main-area {
+      flex: 1;
+      padding: 2rem 2rem 2rem 4rem;
+      background: #1b1b2b;
+      position: relative;
+      overflow: auto;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .chart-container {
+      width: 250px;
+      height: 250px;
+      position: relative;
+      margin: auto;
+    }
+
+    .chart-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 52px;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+    }
+
+    .chart-center-text small {
+      display: block;
+      font-size: 12px;
+      font-weight: normal;
+      color: white;
+    }
+
+    .pdf-button {
+      padding: 0.75rem 2rem;
+      background-color: #00d4ff;
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .reason-box {
+      background-color: #2e2e40;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      overflow-y: auto;
+    }
+
+    .reason-box h3 {
+      border-bottom: 1px solid #00d4ff;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      font-size: 1.2rem;
+      color: #00d4ff;
+    }
+
+    .reason-box ul {
+      list-style: disc;
+      padding-left: 1.5rem;
+    }
+
+    .reason-box li {
+      margin-bottom: 0.5rem;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: transparent;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    .pdf-preview {
+      width: 100%;
+      margin-top: 100px;
+      height: 100px;
+      border: 2px dashed #00d4ff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #00d4ff;
+      text-align: center;
+      background: linear-gradient(135deg, #1e1e2f90, #2c2c3f90);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 2;
+    }
+
+    .result {
+      display: flex;
+      width: 100%;
+      gap: 100px;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="stars" id="starfield-sidebar"></div>
+      <h1>ORION</h1>
+      <a href="/home">Home</a>
+      <a href="/ats">ATS AI</a>
+      <a href="/codebot">CodeBot AI</a>
+      <a href="/login" class="logout">Logout</a>
+    </div>
+
+    <div class="main-area">
+      <div class="stars" id="starfield-main"></div>
+
+      <div class="result">
+        <div class="graph">
+          <h2 style="text-align:center; margin-bottom: 50px;">Resume ATS Score</h2>
+          <div class="chart-container">
+            <canvas id="atsDonutChart"></canvas>
+            <div class="chart-center-text">
+              <%= ats.aiResponse.ATS.Score %>%
+              <small>ATS Score</small>
+            </div>
+          </div>
+        </div>  
+
+        <div class="reason-box">
+          <h2 style="margin-bottom: 20px;">AI Response Summary</h2>
+        
+          <!-- Iterate over Suggestions -->
+          <% for (const section in ats.aiResponse.ATS.Suggestions) { %>
+            <h3><%= section %></h3>
+            <ul style="margin-bottom: 40px;">
+              <% ats.aiResponse.ATS.Suggestions[section].forEach(reason => { %>
+                <li style="margin-bottom: 20px;"><%= reason %></li>
+              <% }); %>
+            </ul>
+          <% } %>
+        
+          <!-- Iterate over Suitable Roles -->
+          <h3>Suitable Roles</h3>
+          <ul style="margin-bottom: 40px;">
+            <% ats.aiResponse.SuitableRoles.forEach(role => { %>
+              <li style="margin-bottom: 20px;">
+                <strong><%= role.Role_name %></strong>: 
+                <p><%= role.Reasoning %></p>
+              </li>
+            <% }); %>
+          </ul>
+        </div>        
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const atsScore = <%= ats.aiResponse.ATS.Score %>;
+    const remaining = 100 - atsScore;
+  
+    const ctx = document.getElementById('atsDonutChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [atsScore, remaining],
+          backgroundColor: ['#4CAF50', '#e0e0e0'],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+  </script>  
+  <script>
+    function generateStars(containerId, count = 50) {
+      const container = document.getElementById(containerId);
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement("span");
+        star.style.top = Math.random() * 100 + "%";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.animationDelay = Math.random() * 2 + "s";
+        container.appendChild(star);
+      }
+    }
+
+    generateStars("starfield-sidebar", 40);
+    generateStars("starfield-main", 70);
+  </script>
+</body>
+</html>

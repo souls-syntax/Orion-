@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orion - ATS Input</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+ 
+    body, html {
+      font-family: 'Share Tech Mono', monospace;
+      height: 100vh;
+      background: #121212;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+    }
+
+    .sidebar {
+      min-width: 220px;
+      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .sidebar h1 {
+      font-size: 2rem;
+      color: #00d4ff;
+      text-align: center;
+      animation: subtleGlow 2s infinite alternate;
+    }
+
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 1.2rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .logout {
+      margin-top: auto;
+    }
+
+    @keyframes subtleGlow {
+      from { text-shadow: 0 0 5px #00d4ff; }
+      to   { text-shadow: 0 0 15px #00d4ff; }
+    }
+
+    .main-area {
+      flex: 1;
+      padding: 2rem;
+      background: #1b1b2b;
+      position: relative;
+      overflow: auto;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 400px;
+      width: 100%;
+      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 2;
+    }
+
+    .form label {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    .form input, .form textarea, .form button {
+      font-size: 1rem;
+      padding: 0.5rem;
+      border: 2px solid #00d4ff;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form input:focus, .form textarea:focus {
+      border-color: #005f7f;
+    }
+
+    .form textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    .form button {
+      background: #00d4ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .form button:hover {
+      background: #005f7f;
+    }
+
+    .pdf-preview {
+      width: 100%;
+      height: 100%;
+      border: 2px dashed #00d4ff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #00d4ff;
+      text-align: center;
+      background: linear-gradient(135deg, #1e1e2f90, #2c2c3f90);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 2;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: transparent;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stars span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    .submit-btn {
+      background: #00d4ff;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 6px;
+      width: 100%;
+      font-family: 'Share Tech Mono', monospace;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+      font-size: 1.1rem;
+    }
+
+    .submit-btn:hover {
+      background: #00b4d8;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading-overlay" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-size: 1.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    color: #00b4d8;
+  ">
+    Loading...
+  </div>
+  <div class="container">
+    <div class="sidebar">
+      <div class="stars" id="starfield-sidebar"></div>
+      <h1>ORION</h1>
+      <a href="/home">Home</a>
+      <a href="/ats">ATS AI</a>
+      <a href="/codebot">CodeBot AI</a>
+      <a href="/login" class="logout">Logout</a>
+    </div>
+
+    <div class="main-area">
+      <div class="stars" id="starfield-main"></div>
+
+      <form class="form" id="ats-form">
+        <label for="company-name">Company Name</label>
+        <input type="text" id="company-name" style="font-family: 'Share Tech Mono', monospace;" name="company-name" placeholder="Enter company name" required />
+
+        <label for="job-description">Desired Job Description</label>
+        <textarea id="job-description" name="job-description" placeholder="Enter job description" required></textarea>
+
+        <button class="submit-btn" type="submit">Submit</button>
+      </form>
+
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
+        <input type="file" id="pdf-upload" accept="application/pdf" style="color: white;" />
+        
+        <div class="pdf-preview" id="pdf-preview-box">
+          Upload PDF Preview
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generateStars(containerId, count = 60) {
+      const container = document.getElementById(containerId);
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement("span");
+        star.style.top = Math.random() * 100 + "%";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.animationDelay = Math.random() * 2 + "s";
+        container.appendChild(star);
+      }
+    }
+
+    generateStars("starfield-sidebar", 40);
+    generateStars("starfield-main", 70);
+  </script>
+  <script>
+    const pdfInput = document.getElementById('pdf-upload');
+    const previewBox = document.getElementById('pdf-preview-box');
+  
+    pdfInput.addEventListener('change', function () {
+      const file = this.files[0];
+  
+      if (file && file.type === 'application/pdf') {
+        const fileURL = URL.createObjectURL(file);
+        previewBox.innerHTML = `
+          <iframe src="${fileURL}" width="100%" height="100%" style="border:none; border-radius: 12px;"></iframe>
+        `;
+      } else {
+        previewBox.innerHTML = "Please upload a valid PDF file.";
+      }
+    });
+  </script>
+  <script>
+    async function submitForm(event) {
+      event.preventDefault();
+
+      document.getElementById('loading-overlay').style.display = 'flex';
+
+      try {
+        const companyName = document.getElementById('company-name').value.trim();
+        const jobDescription = document.getElementById('job-description').value.trim();
+        const pdfFile = document.getElementById('pdf-upload').files[0];
+
+        const formData = new FormData();
+        formData.append('companyName', companyName);
+        formData.append('jobDescription', jobDescription);
+        formData.append('pdfFile', pdfFile); // Key should match multer's `single('pdfFile')`
+
+        const response = await fetch('/add/ats', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+
+        document.getElementById('loading-overlay').style.display = 'none';
+
+        if (response.ok) {
+          window.location.href = '/ats';
+        } else {
+          const error = await response.text();
+          alert(`Error: ${error}`);
+        }
+      } catch (error) {
+        console.error('Error submitting the form:', error);
+        alert('An unexpected error occurred. Please try again.');
+        document.getElementById('loading-overlay').style.display = 'none';
+      }
+    }
+
+    // Attach submit handler
+    document.getElementById('ats-form').addEventListener('submit', submitForm);
+  </script>
+</body>
+</html>
